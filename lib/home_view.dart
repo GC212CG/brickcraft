@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:brick_craft/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webviewx/webviewx.dart';
@@ -24,7 +27,423 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  double blockElevation = 5;
+  double colorElevation = 5;
+  double clockElevation = 5;
+  double counterclockElevation = 5;
+  double trashElevation = 5;
+  double shareElevation = 5;
+  double viewpointElevation = 5;
+
+  bool isShapeSelector = false;
+  bool isColorPallete = false;
+
+  bool isDelete = false;
+
+  int currentColorIndex = 1;
+  int currentShapeIndex = 1;
+
+  double toolbarHeight = 120;
+
+  int shapeRotation = 0;
+
+  int mobileWidth = 750;
+  bool isMobile = false;
+
+  bool isStart = true;
+  double startWindowOpacity = 1;
+
+  @override
   Widget build(BuildContext context) {
+    isMobile = MediaQuery.of(context).size.width < mobileWidth;
+
+    List<Widget> bottomWidgets = [
+      SizedBox(width: 20),
+
+      ///
+      /// Block Selector
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            blockElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            blockElevation = 5;
+            webViewXController.setIgnoreAllGestures(true);
+            isShapeSelector = true;
+            setState(() {});
+          },
+          child: Card(
+            elevation: blockElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    height: 55,
+                    image: AssetImage("assets/thumbnail$currentShapeIndex.png"),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///
+      /// Color Picker
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            colorElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            colorElevation = 5;
+            isColorPallete = true;
+            webViewXController.setIgnoreAllGestures(true);
+            setState(() {});
+          },
+          child: Card(
+            elevation: colorElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(70),
+            ),
+            child: Container(
+              width: 70,
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(55),
+                    child: Container(
+                      width: 55,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(55),
+                        boxShadow: [
+                          BoxShadow(
+                              color: palleteColors[currentColorIndex - 1][1]),
+                          BoxShadow(
+                            color: palleteColors[currentColorIndex - 1][0],
+                            offset: Offset(0, 2),
+                            spreadRadius: 0.0,
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      ///
+      ///
+      ///
+      ///
+      ///
+      /// Roatate block
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            clockElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            clockElevation = 5;
+            rotateBlock(true);
+            setState(() {});
+          },
+          child: Card(
+            elevation: clockElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.arrow_clockwise,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            counterclockElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            counterclockElevation = 5;
+            rotateBlock(false);
+            setState(() {});
+          },
+          child: Card(
+            elevation: counterclockElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.arrow_counterclockwise,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      ///
+      ///
+      ///
+      ///
+      /// viewpoint
+      if (!isMobile)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Container(
+            width: 1,
+            height: 60,
+            color: Colors.grey.shade300,
+          ),
+        ),
+      if (!isMobile)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+          child: Card(
+            elevation: viewpointElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              decoration: BoxDecoration(
+                color: isDelete ? Colors.red : Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image(image: AssetImage("assets/viewpoint.png")),
+                  ),
+                  Positioned(
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: GestureDetector(
+                            onTapDown: (_) {
+                              viewpointElevation = 0;
+                              setState(() {});
+                            },
+                            onTapUp: (_) {
+                              viewpointElevation = 5;
+                              callMethod("global_camera_topView");
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTapDown: (_) {
+                                    viewpointElevation = 0;
+                                    setState(() {});
+                                  },
+                                  onTapUp: (_) {
+                                    viewpointElevation = 5;
+                                    callMethod("global_camera_frontView");
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTapDown: (_) {
+                                    viewpointElevation = 0;
+                                    setState(() {});
+                                  },
+                                  onTapUp: (_) {
+                                    viewpointElevation = 5;
+                                    callMethod("global_camera_rightSideView");
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+      ///
+      ///
+      ///
+      ///
+      /// Delete Mode
+      Padding(
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+        child: Container(
+          width: 1,
+          height: 60,
+          color: Colors.grey.shade300,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            trashElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            trashElevation = 5;
+            isDelete = !isDelete;
+            if (isDelete)
+              callMethod("global_control_delete");
+            else
+              callMethod("global_control_create");
+
+            setState(() {});
+          },
+          child: Card(
+            elevation: trashElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              decoration: BoxDecoration(
+                color: isDelete ? Colors.red : Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.trash,
+                    size: 40,
+                    color: isDelete ? Colors.white : Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      ///
+      ///
+      ///
+      ///
+      /// Download OBJ
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            shareElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            shareElevation = 5;
+            setState(() {});
+          },
+          child: Card(
+            elevation: shareElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.share,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      SizedBox(width: 20),
+    ];
+
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+
     return Scaffold(
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -32,8 +451,8 @@ class _HomeViewState extends State<HomeView> {
         child: Stack(
           children: [
             Positioned(
-              top: 100,
-              bottom: 0,
+              top: 0,
+              bottom: 100,
               right: 0,
               left: 0,
               child: WebViewX(
@@ -44,7 +463,7 @@ class _HomeViewState extends State<HomeView> {
                 initialSourceType: SourceType.html,
                 onWebViewCreated: (WebViewXController wvxController) {
                   webViewXController = wvxController;
-                  webViewXController.setIgnoreAllGestures(false);
+                  webViewXController.setIgnoreAllGestures(true);
                 },
               ),
             ),
@@ -53,56 +472,323 @@ class _HomeViewState extends State<HomeView> {
             // 컬러 -> 컬러팔레트
             // 파일 다운로드
             Positioned(
-              height: 100,
+              top: 30,
+              left: 30,
+              child: Row(
+                children: [
+                  Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(100),
+                          offset: Offset(0, 3),
+                          blurRadius: 7,
+                        )
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Image(
+                        height: 60,
+                        image: AssetImage("logo.png"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "BrickCraft",
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontFamily: "nanum",
+                      fontWeight: FontWeight.w900,
+                      color: Color.fromRGBO(30, 30, 30, 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              height: toolbarHeight,
+              bottom: 0,
               left: 0,
               right: 0,
               child: Container(
-                color: Color.fromRGBO(173, 216, 236, 1),
-                child: Row(
-                  children: [
-                    const FlutterLogo(size: 70),
-                    SizedBox(width: 5),
-                    Text("Flutter\nController"),
-                    SizedBox(width: 10),
-                    CupertinoButton(
-                      color: Colors.blue,
-                      child: Text("FRONT"),
-                      onPressed: () {
-                        callMethod('global_camera_frontView');
-                      },
-                    ),
-                    CupertinoButton(
-                      color: Colors.blue,
-                      child: Text("TOP"),
-                      onPressed: () {
-                        callMethod('global_camera_topView');
-                      },
-                    ),
-                    CupertinoButton(
-                      color: Colors.blue,
-                      child: Text("CUBE-RED"),
-                      onPressed: () {
-                        callMethod('global_control_selectColor', params: [2]);
-                        callMethod('global_control_selectShape', params: [1]);
-                      },
-                    ),
-                    CupertinoButton(
-                      color: Colors.blue,
-                      child: Text("OBJ"),
-                      onPressed: () {
-                        String result = callMethod('global_control_getObjCode');
-                        print(result);
-                      },
-                    ),
+                height: 85,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(25),
+                      offset: Offset(0, -3),
+                      blurRadius: 25,
+                    )
                   ],
                 ),
+                child: isMobile
+                    ? ListView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: bottomWidgets,
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: bottomWidgets,
+                      ),
               ),
             ),
+
+            if (isShapeSelector)
+              Positioned(
+                bottom: toolbarHeight,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 200,
+                        width: 320,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(100),
+                              offset: Offset(0, 3),
+                              blurRadius: 7,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    blockButton("assets/thumbnail1.png", 1),
+                                    blockButton("assets/thumbnail2.png", 2),
+                                    blockButton("assets/thumbnail3.png", 3),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    blockButton("assets/thumbnail4.png", 4),
+                                    blockButton("assets/thumbnail5.png", 5),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (isColorPallete)
+              Positioned(
+                bottom: toolbarHeight,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 200,
+                        width: 320,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(100),
+                              offset: Offset(0, 3),
+                              blurRadius: 7,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    colorButton(palleteColors[0][0],
+                                        palleteColors[0][1], 1),
+                                    colorButton(palleteColors[1][0],
+                                        palleteColors[1][1], 2),
+                                    colorButton(palleteColors[2][0],
+                                        palleteColors[2][1], 3),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    colorButton(palleteColors[3][0],
+                                        palleteColors[3][1], 4),
+                                    colorButton(palleteColors[4][0],
+                                        palleteColors[4][1], 5),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            if (isStart)
+              AnimatedOpacity(
+                duration: Duration(milliseconds: 250),
+                opacity: startWindowOpacity,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(45),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(100),
+                                  offset: Offset(0, 3),
+                                  blurRadius: 7,
+                                )
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(45),
+                              child: Image(
+                                height: 120,
+                                image: AssetImage("logo.png"),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            "BrickCraft",
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontFamily: "nanum",
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          CustomButton(
+                            size: 180,
+                            height: 50,
+                            color: [
+                              Colors.blueAccent,
+                              Colors.blueAccent.shade700,
+                            ],
+                            colorTapDown: [
+                              Colors.blueAccent.shade700,
+                              Colors.blueAccent,
+                            ],
+                            borderColor: Colors.blue.shade800,
+                            child: Text(
+                              "Start to build!",
+                              style: TextStyle(
+                                fontFamily: "nanum",
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            onPressed: () {
+                              startWindowOpacity = 0;
+
+                              setState(() {});
+                              Future.delayed(Duration(milliseconds: 250))
+                                  .then((value) {
+                                webViewXController.setIgnoreAllGestures(false);
+                                isStart = false;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
+
+  void rotateBlock(bool isClockwise) {
+    webViewXController.setIgnoreAllGestures(false);
+    int changeShape = 0;
+
+    if (isClockwise) {
+      shapeRotation += 1;
+      if (shapeRotation >= 4) shapeRotation = 0;
+    } else {
+      shapeRotation -= 1;
+      if (shapeRotation < 0) shapeRotation = 3;
+    }
+
+    switch (currentShapeIndex) {
+      case 1:
+        changeShape = 1;
+        break;
+      case 2:
+        changeShape = 2 + shapeRotation;
+        break;
+      case 3:
+        changeShape = 6 + shapeRotation;
+        break;
+      case 4:
+        changeShape = 10;
+        break;
+      case 5:
+        changeShape = 11;
+        break;
+    }
+    callMethod("global_control_selectShape", params: [changeShape]);
+  }
+
+  List<List<Color>> palleteColors = [
+    [Color.fromRGBO(68, 68, 68, 1), Colors.black],
+    [Color.fromRGBO(212, 74, 122, 1), Colors.red.shade900],
+    [Color.fromRGBO(88, 50, 226, 1), Colors.purple.shade900],
+    [Color.fromRGBO(135, 185, 88, 1), Colors.green.shade900],
+    [Colors.white, Colors.grey],
+  ];
 
   dynamic callMethod(String name, {List<dynamic>? params}) {
     html.Element? frame = html.querySelector('iframe');
@@ -111,6 +797,123 @@ class _HomeViewState extends State<HomeView> {
     js.JsObject jsGlobal = jsDocument['globalThis'];
     return jsGlobal.callMethod(name, params);
   }
+
+  Widget blockButton(String assetName, int index) => Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            blockElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            blockElevation = 5;
+
+            isShapeSelector = false;
+            isColorPallete = false;
+
+            webViewXController.setIgnoreAllGestures(false);
+            currentShapeIndex = index;
+
+            switch (index) {
+              case 1:
+                index = 1;
+                break;
+              case 2:
+                index = 2 + shapeRotation;
+                break;
+              case 3:
+                index = 6 + shapeRotation;
+                break;
+              case 4:
+                index = 10;
+                break;
+              case 5:
+                index = 11;
+                break;
+            }
+
+            callMethod("global_control_selectShape", params: [index]);
+            setState(() {});
+          },
+          child: Card(
+            elevation: blockElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: 75,
+              height: 75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    height: 55,
+                    image: AssetImage(assetName),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget colorButton(Color btnColor, Color btnColorShadow, int index) =>
+      Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            colorElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            colorElevation = 5;
+
+            isShapeSelector = false;
+            isColorPallete = false;
+
+            currentColorIndex = index;
+
+            callMethod("global_control_selectColor", params: [index]);
+
+            webViewXController.setIgnoreAllGestures(false);
+            setState(() {});
+          },
+          child: Card(
+            elevation: colorElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(70),
+            ),
+            child: Container(
+              width: 70,
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(55),
+                    child: Container(
+                      width: 55,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(55),
+                        boxShadow: [
+                          BoxShadow(color: btnColorShadow),
+                          BoxShadow(
+                            color: btnColor,
+                            offset: Offset(0, 2),
+                            spreadRadius: 0.0,
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
 
   final initialContent = """
     <!DOCTYPE html>
