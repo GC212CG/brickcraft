@@ -1,3 +1,4 @@
+import 'dart:convert' as convert;
 import 'dart:ui';
 
 import 'package:brick_craft/custom_button.dart';
@@ -404,6 +405,28 @@ class _HomeViewState extends State<HomeView> {
           },
           onTapUp: (_) {
             shareElevation = 5;
+            String objCode = callMethod("global_control_getObjCode");
+
+            // https://stackoverflow.com/questions/59783344/flutter-web-download-option
+            // https://stackoverflow.com/questions/59663377/how-to-save-and-download-text-file-in-flutter-web-application
+            // prepare
+            final bytes = convert.utf8.encode(objCode);
+            final blob = html.Blob([bytes]);
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final anchor =
+                html.document.createElement('a') as html.AnchorElement
+                  ..href = url
+                  ..style.display = 'none'
+                  ..download = 'output.obj';
+            html.document.body!.children.add(anchor);
+
+            // download
+            anchor.click();
+
+            // cleanup
+            html.document.body!.children.remove(anchor);
+            html.Url.revokeObjectUrl(url);
+
             setState(() {});
           },
           child: Card(
