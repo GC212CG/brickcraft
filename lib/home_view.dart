@@ -48,7 +48,7 @@ class _HomeViewState extends State<HomeView> {
   int currentColorIndex = 1;
   int currentShapeIndex = 1;
 
-  double toolbarHeight = 120;
+  late double toolbarHeight;
 
   int shapeRotation = 0;
 
@@ -61,6 +61,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     isMobile = MediaQuery.of(context).size.width < mobileWidth;
+
+    toolbarHeight = isMobile ? 210 : 120;
 
     List<Widget> bottomWidgets = [
       SizedBox(width: 20),
@@ -76,8 +78,10 @@ class _HomeViewState extends State<HomeView> {
           },
           onTapUp: (_) {
             blockElevation = 5;
-            webViewXController.setIgnoreAllGestures(true);
-            isShapeSelector = true;
+
+            isShapeSelector = !isShapeSelector;
+            webViewXController.setIgnoreAllGestures(isShapeSelector);
+
             setState(() {});
           },
           child: Card(
@@ -118,8 +122,10 @@ class _HomeViewState extends State<HomeView> {
           },
           onTapUp: (_) {
             colorElevation = 5;
-            isColorPallete = true;
-            webViewXController.setIgnoreAllGestures(true);
+
+            isColorPallete = !isColorPallete;
+            webViewXController.setIgnoreAllGestures(isColorPallete);
+
             setState(() {});
           },
           child: Card(
@@ -239,6 +245,13 @@ class _HomeViewState extends State<HomeView> {
       ///
       ///
       ///
+      /// Delete Mode
+      if (!isMobile) deleteButton(),
+
+      ///
+      ///
+      ///
+      ///
       /// viewpoint
       if (!isMobile)
         Padding(
@@ -333,63 +346,15 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         ),
-
-      ///
-      ///
-      ///
-      ///
-      /// Delete Mode
-      Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-        child: Container(
-          width: 1,
-          height: 60,
-          color: Colors.grey.shade300,
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: GestureDetector(
-          onTapDown: (_) {
-            trashElevation = 0;
-            setState(() {});
-          },
-          onTapUp: (_) {
-            trashElevation = 5;
-            isDelete = !isDelete;
-            if (isDelete)
-              callMethod("global_control_delete");
-            else
-              callMethod("global_control_create");
-
-            setState(() {});
-          },
-          child: Card(
-            elevation: trashElevation,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Container(
-              width: 75,
-              height: 75,
-              decoration: BoxDecoration(
-                color: isDelete ? Colors.red : Colors.white,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    CupertinoIcons.trash,
-                    size: 40,
-                    color: isDelete ? Colors.white : Colors.grey.shade600,
-                  ),
-                ],
-              ),
-            ),
+      if (!isMobile)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: Container(
+            width: 1,
+            height: 60,
+            color: Colors.grey.shade300,
           ),
         ),
-      ),
 
       ///
       ///
@@ -405,27 +370,8 @@ class _HomeViewState extends State<HomeView> {
           },
           onTapUp: (_) {
             shareElevation = 5;
-            String objCode = callMethod("global_control_getObjCode");
 
-            // https://stackoverflow.com/questions/59783344/flutter-web-download-option
-            // https://stackoverflow.com/questions/59663377/how-to-save-and-download-text-file-in-flutter-web-application
-            // prepare
-            final bytes = convert.utf8.encode(objCode);
-            final blob = html.Blob([bytes]);
-            final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor =
-                html.document.createElement('a') as html.AnchorElement
-                  ..href = url
-                  ..style.display = 'none'
-                  ..download = 'output.obj';
-            html.document.body!.children.add(anchor);
-
-            // download
-            anchor.click();
-
-            // cleanup
-            html.document.body!.children.remove(anchor);
-            html.Url.revokeObjectUrl(url);
+            exportObjFile("output");
 
             setState(() {});
           },
@@ -441,7 +387,7 @@ class _HomeViewState extends State<HomeView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    CupertinoIcons.share,
+                    CupertinoIcons.arrow_down_circle,
                     size: 40,
                     color: Colors.grey.shade600,
                   ),
@@ -538,7 +484,7 @@ class _HomeViewState extends State<HomeView> {
               left: 0,
               right: 0,
               child: Container(
-                height: 85,
+                height: toolbarHeight,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -550,17 +496,30 @@ class _HomeViewState extends State<HomeView> {
                   ],
                 ),
                 child: isMobile
-                    ? ListView(
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
+                    ? Column(
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: bottomWidgets,
-                              ),
-                            ],
+                          SizedBox(height: 12),
+                          Container(
+                            height: 85,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              physics: BouncingScrollPhysics(),
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: bottomWidgets,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          deleteButton(
+                            width: MediaQuery.of(context).size.width - 50,
+                            height: 65,
                           ),
                         ],
                       )
@@ -814,12 +773,79 @@ class _HomeViewState extends State<HomeView> {
     [Colors.white, Colors.grey],
   ];
 
+  Widget deleteButton({double width = 75, double height = 75}) => Padding(
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: GestureDetector(
+          onTapDown: (_) {
+            trashElevation = 0;
+            setState(() {});
+          },
+          onTapUp: (_) {
+            trashElevation = 5;
+            isDelete = !isDelete;
+            if (isDelete)
+              callMethod("global_control_delete");
+            else
+              callMethod("global_control_create");
+
+            setState(() {});
+          },
+          child: Card(
+            elevation: trashElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: isDelete ? Colors.red : Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.trash,
+                    size: width > height ? height - 35 : width - 35,
+                    color: isDelete ? Colors.white : Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
   dynamic callMethod(String name, {List<dynamic>? params}) {
     html.Element? frame = html.querySelector('iframe');
     var jsFrame = js.JsObject.fromBrowserObject(frame!);
     js.JsObject jsDocument = jsFrame['contentWindow'];
     js.JsObject jsGlobal = jsDocument['globalThis'];
     return jsGlobal.callMethod(name, params);
+  }
+
+  void exportObjFile(String filename) {
+    String objCode = callMethod("global_control_getObjCode");
+
+    // https://stackoverflow.com/questions/59783344/flutter-web-download-option
+    // https://stackoverflow.com/questions/59663377/how-to-save-and-download-text-file-in-flutter-web-application
+    // prepare
+    final bytes = convert.utf8.encode(objCode);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..style.display = 'none'
+      ..download = filename + ".obj";
+    html.document.body!.children.add(anchor);
+
+    // download
+    anchor.click();
+
+    // cleanup
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
   }
 
   Widget blockButton(String assetName, int index) => Padding(
