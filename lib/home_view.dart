@@ -260,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
               width: 75,
               height: 75,
               decoration: BoxDecoration(
-                color: isDelete ? Colors.red : Colors.white,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
               ),
               child: Stack(
@@ -452,7 +452,7 @@ class _HomeViewState extends State<HomeView> {
           children: [
             Positioned(
               top: 0,
-              bottom: 100,
+              bottom: toolbarHeight,
               right: 0,
               left: 0,
               child: WebViewX(
@@ -729,12 +729,13 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             onPressed: () {
                               startWindowOpacity = 0;
-
                               setState(() {});
+
                               Future.delayed(Duration(milliseconds: 250))
                                   .then((value) {
                                 webViewXController.setIgnoreAllGestures(false);
                                 isStart = false;
+                                setState(() {});
                               });
                             },
                           ),
