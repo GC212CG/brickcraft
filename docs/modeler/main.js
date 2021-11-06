@@ -1,8 +1,9 @@
-import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js'
-import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
-import {OBJExporter} from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/exporters/OBJExporter.js';
-import * as Shape from './resources/objects.js'
-let textureSrc = './resources/texture.png'
+import * as THREE from './resources/three.module'
+import {OrbitControls} from './resources/OrbitControls';
+import {OBJExporter} from './resources/OBJExporter';
+import * as Shape from './objects.js'
+
+https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/exporters/OBJExporter.js
 
 class World {
     constructor(options) {
@@ -362,18 +363,17 @@ window.onload = () => {
     canvas = document.querySelector('#c');
     renderer = new THREE.WebGLRenderer({canvas});
 
-    
-    globalThis.global_control_create = control_create
-    globalThis.global_control_delete = control_delete
-    globalThis.global_control_selectColor = control_selectColor
-    globalThis.global_control_selectShape = control_selectShape
-    globalThis.global_control_getObjCode = control_getObjCode
 
-    globalThis.global_camera_topView = camera_topView
-    globalThis.global_camera_frontView = camera_frontView
-    globalThis.global_camera_rightSideView = camera_rightSideView
-    globalThis.global_camera_perspectiveView = camera_perspectiveView
-    
+    global_control_create = control_create
+    global_control_delete = control_delete
+    global_control_selectColor = control_selectColor
+    global_control_selectShape = control_selectShape
+    global_control_getObjCode = control_getObjCode
+
+    global_camera_topView = camera_topView
+    global_camera_frontView = camera_frontView
+    global_camera_rightSideView = camera_rightSideView
+    global_camera_perspectiveView = camera_perspectiveView
 
     let fov = 75;
     const aspect = 2;  // the canvas default
@@ -387,7 +387,7 @@ window.onload = () => {
     camera_perspectiveView()
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xF3FBFF );
+    scene.background = new THREE.Color('lightblue');
 
     changeBlock()
 
@@ -420,7 +420,7 @@ window.onload = () => {
     // =============================================================================
 
     loader = new THREE.TextureLoader();
-    texture = loader.load(textureSrc, render);
+    texture = loader.load('./resources/texture.png', render);
     
     
     // Create world
@@ -697,5 +697,9 @@ function requestRenderIfNotRequested() {
         requestAnimationFrame(render);
     }
 }
+
+
+
+
 
 
