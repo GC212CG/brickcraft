@@ -767,9 +767,9 @@ class _HomeViewState extends State<HomeView> {
 
   List<List<Color>> palleteColors = [
     [Color.fromRGBO(68, 68, 68, 1), Colors.black],
-    [Color.fromRGBO(212, 74, 122, 1), Colors.red.shade900],
-    [Color.fromRGBO(88, 50, 226, 1), Colors.purple.shade900],
-    [Color.fromRGBO(135, 185, 88, 1), Colors.green.shade900],
+    [Color.fromRGBO(255, 106, 128, 1), Colors.red.shade900],
+    [Color.fromRGBO(91, 123, 255, 1), Colors.purple.shade900],
+    [Color.fromRGBO(114, 251, 144, 1), Colors.green.shade900],
     [Colors.white, Colors.grey],
   ];
 
