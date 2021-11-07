@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:brick_craft/custom_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:webviewx/webviewx.dart';
 
 import 'dart:html' as html;
@@ -22,6 +23,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late WebViewXController webViewXController;
 
+  PackageInfo? packageInfo;
+
   @override
   void dispose() {
     super.dispose();
@@ -30,6 +33,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    PackageInfo.fromPlatform().then((value) {
+      packageInfo = value;
+      setState(() {});
+    });
   }
 
   double blockElevation = 5;
@@ -346,15 +353,15 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         ),
-      if (!isMobile)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Container(
-            width: 1,
-            height: 60,
-            color: Colors.grey.shade300,
-          ),
+
+      Padding(
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+        child: Container(
+          width: 1,
+          height: 60,
+          color: Colors.grey.shade300,
         ),
+      ),
 
       ///
       ///
@@ -530,6 +537,22 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
 
+            Positioned(
+              bottom: toolbarHeight + 25,
+              right: 30,
+              child: Text(
+                packageInfo != null
+                    ? "v${packageInfo!.version}+${packageInfo!.buildNumber}"
+                    : "",
+                style: TextStyle(
+                  fontFamily: "nanum",
+                  fontSize: 20,
+                  color: Colors.black.withAlpha(75),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+
             if (isShapeSelector)
               Positioned(
                 bottom: toolbarHeight,
@@ -582,6 +605,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
+
             if (isColorPallete)
               Positioned(
                 bottom: toolbarHeight,
