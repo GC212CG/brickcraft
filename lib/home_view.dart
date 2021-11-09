@@ -468,7 +468,7 @@ class _HomeViewState extends State<HomeView> {
                       borderRadius: BorderRadius.circular(30),
                       child: Image(
                         height: 60,
-                        image: AssetImage("logo.png"),
+                        image: AssetImage("assets/logo.png"),
                       ),
                     ),
                   ),
@@ -697,7 +697,7 @@ class _HomeViewState extends State<HomeView> {
                               borderRadius: BorderRadius.circular(45),
                               child: Image(
                                 height: 120,
-                                image: AssetImage("logo.png"),
+                                image: AssetImage("assets/logo.png"),
                               ),
                             ),
                           ),
