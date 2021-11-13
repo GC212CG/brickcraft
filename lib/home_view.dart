@@ -21,8 +21,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  // For join with Three.js based webpage
   late WebViewXController webViewXController;
-
+  // To get App build version.
   PackageInfo? packageInfo;
 
   @override
@@ -33,12 +34,14 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    // Get App's build version
     PackageInfo.fromPlatform().then((value) {
       packageInfo = value;
       setState(() {});
     });
   }
 
+  // For handling animation during touch event
   double blockElevation = 5;
   double colorElevation = 5;
   double clockElevation = 5;
@@ -47,11 +50,14 @@ class _HomeViewState extends State<HomeView> {
   double shareElevation = 5;
   double viewpointElevation = 5;
 
+  // Palette flag
   bool isShapeSelector = false;
   bool isColorPallete = false;
 
+  // Delete mode
   bool isDelete = false;
 
+  // Manipulate block state
   int currentColorIndex = 1;
   int currentShapeIndex = 1;
 
@@ -67,10 +73,11 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    // For mobile compatible
     isMobile = MediaQuery.of(context).size.width < mobileWidth;
-
     toolbarHeight = isMobile ? 210 : 120;
 
+    // Bottom widgets
     List<Widget> bottomWidgets = [
       SizedBox(width: 20),
 
@@ -412,13 +419,6 @@ class _HomeViewState extends State<HomeView> {
     ///
     ///
     ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
 
     return Scaffold(
       body: SizedBox(
@@ -426,6 +426,9 @@ class _HomeViewState extends State<HomeView> {
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
+            ///
+            ///
+            /// Present Three.js HTML page
             Positioned(
               top: 0,
               bottom: toolbarHeight,
@@ -443,10 +446,10 @@ class _HomeViewState extends State<HomeView> {
                 },
               ),
             ),
-            // 마우스 이벤트 어떻게 처리할지
-            // 드롭다운 -> 블럭 선택
-            // 컬러 -> 컬러팔레트
-            // 파일 다운로드
+
+            ///
+            ///
+            /// Upside Brick Craft Logo
             Positioned(
               top: 30,
               left: 30,
@@ -485,6 +488,10 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
             ),
+
+            ///
+            ///
+            /// Toolbar at below
             Positioned(
               height: toolbarHeight,
               bottom: 0,
@@ -537,6 +544,9 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
 
+            ///
+            ///
+            /// App build version label
             Positioned(
               bottom: toolbarHeight + 25,
               right: 30,
@@ -553,6 +563,9 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
 
+            ///
+            ///
+            /// Shape selector window
             if (isShapeSelector)
               Positioned(
                 bottom: toolbarHeight,
@@ -606,6 +619,9 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
 
+            ///
+            ///
+            /// Color selector window
             if (isColorPallete)
               Positioned(
                 bottom: toolbarHeight,
@@ -664,6 +680,9 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
 
+            ///
+            ///
+            /// Start window (curtain)
             if (isStart)
               AnimatedOpacity(
                 duration: Duration(milliseconds: 250),
@@ -757,6 +776,9 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  ///
+  ///
+  /// Manage rotation state of block
   void rotateBlock(bool isClockwise) {
     webViewXController.setIgnoreAllGestures(false);
     int changeShape = 0;
@@ -789,6 +811,9 @@ class _HomeViewState extends State<HomeView> {
     callMethod("global_control_selectShape", params: [changeShape]);
   }
 
+  ///
+  ///
+  /// Manage pallete Colors
   List<List<Color>> palleteColors = [
     [Color.fromRGBO(68, 68, 68, 1), Colors.black],
     [Color.fromRGBO(255, 106, 128, 1), Colors.red.shade900],
@@ -841,6 +866,9 @@ class _HomeViewState extends State<HomeView> {
         ),
       );
 
+  ///
+  ///
+  /// To connect and call JS global functions
   dynamic callMethod(String name, {List<dynamic>? params}) {
     html.Element? frame = html.querySelector('iframe');
     var jsFrame = js.JsObject.fromBrowserObject(frame!);
@@ -849,6 +877,9 @@ class _HomeViewState extends State<HomeView> {
     return jsGlobal.callMethod(name, params);
   }
 
+  ///
+  ///
+  /// Make OBJ coordinate code and make it to text file for download
   void exportObjFile(String filename) {
     String objCode = callMethod("global_control_getObjCode");
 
@@ -872,6 +903,9 @@ class _HomeViewState extends State<HomeView> {
     html.Url.revokeObjectUrl(url);
   }
 
+  ///
+  ///
+  /// Manage select block button
   Widget blockButton(String assetName, int index) => Padding(
         padding: const EdgeInsets.all(3.0),
         child: GestureDetector(
@@ -931,6 +965,9 @@ class _HomeViewState extends State<HomeView> {
         ),
       );
 
+  ///
+  ///
+  /// Manage color select button
   Widget colorButton(Color btnColor, Color btnColorShadow, int index) =>
       Padding(
         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -989,6 +1026,9 @@ class _HomeViewState extends State<HomeView> {
         ),
       );
 
+  ///
+  ///
+  /// HTML text to present Three.js modeler to Flutter app
   final initialContent = """
     <!DOCTYPE html>
     <html>

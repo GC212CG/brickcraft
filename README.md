@@ -1,16 +1,39 @@
-# brick_craft
+# Brick Craft
 
-A new Flutter project.
+ - Flutter based Three.js 3D Modeling app
 
-## Getting Started
+## Information
+ - See our full description throuth the Youtube for this project
+    - [Watch](https://www.youtube.com/watch?v=q-H44HPy658)
+ - See demo as below
+    - [Watch](https://youtu.be/q-H44HPy658?t=91)
 
-This project is a starting point for a Flutter application.
+## Technical Report
+ - This will be added as soon as posible. (~21st, Nov.)
 
-A few resources to get you started if this is your first Flutter project:
+## Getting Started (Flutter)
+ - For run for debug, use the command as below.
+ ```bash
+ $ flutter run -d chrome
+ ```
+ 
+ - For app building, use the command as below.
+ - You can get the stataic page of this app.
+ ```bash
+ $ flutter build web
+ ```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# WebGL code 
+ - `/lib/home_view.dart`: HTML code is defined in `initialContent` variable.
+ - `/web/modeler.js`: This is the main CPU code developed by Three.js
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Distributed by
+ - [Dokyoon Kim (DokySp)](https://github.com/dokysp)
+    - Flutter, Three.js (Refactoring)
+ - [Taehui Kim (taehui530)](https://github.com/taehui530)
+    - Ray cast based picking
+ - [Yoonjae Park (Lab00700)](https://github.com/Lab00700)
+    - Implement 3D Environment
+ - [Minyong Cho (miiiin0)](https://github.com/miiiin0)
+    - Camera, User control
+ 
