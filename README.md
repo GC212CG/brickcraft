@@ -12,7 +12,7 @@
     - [Organization](https://github.com/GC212CG)
 
 ## Technical Report
- - This will be added as soon as posible. (~21st, Nov.)
+ - [Report link](https://github.com/GC212CG/brickcraft/tree/master/documents)
 
 ## Getting Started (Flutter)
  - For run for debug, use the command as below.
